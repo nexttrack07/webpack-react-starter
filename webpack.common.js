@@ -1,29 +1,36 @@
 const path = require('path');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  entry: {
-    app: './src/index.js'
-  },
-  plugins: [
-    new CleanWebpackPlugin(['dist']),
-    new HtmlWebpackPlugin({
-      title: 'Production'
-    })
-  ],
+  entry: './src/index.js',
   output: {
-    filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
   },
   module: {
-    rules: [{
-      test: /\.css$/,
-      use: [
-        'style-loader',
-        'css-loader'
-      ]
-    }]
-  }
-}
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+              modules: true,
+              localIdentName: '[local]__[hash:base64:5]',
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(js|.jsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader', 'eslint-loader'],
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['*', '.js', '.jsx'],
+  },
+};
